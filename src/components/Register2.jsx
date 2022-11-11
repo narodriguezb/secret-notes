@@ -4,25 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 export function Register() {
+  const { singUp } = useAuth();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
-  } = useForm();
+  } = useForm({});
 
-  const customSubmit = async (data) => {
-    const { singUp } = useAuth();
-    const navigate = useNavigate();
+  const customSubmit = async (user) => {
     try {
-      await singUp(data.email, data.password);
+      await singUp(user.email, user.password);
       navigate("/");
     } catch (error) {
       console.log(error);
       alert(error);
     }
 
-    console.log(data);
+    console.log(user);
   };
 
   return (
@@ -32,7 +32,11 @@ export function Register() {
       <form onSubmit={handleSubmit(customSubmit)} className="form-react">
         <div className="form-control">
           <label> Name </label>
-          <input type="text" {...register("name", { required: true })} />
+          <input
+            type="text"
+            placeholder="Write your name"
+            {...register("name", { required: true })}
+          />
           {errors.name?.type === "required" && (
             <small className="fail"> The fild is required </small>
           )}
@@ -40,32 +44,48 @@ export function Register() {
 
         <div className="form-control">
           <label> Last Name </label>
-          <input type="text" {...register("name", { required: true })} />
-          {errors.name?.type === "required" && (
+          <input
+            type="text"
+            placeholder="Write your last name"
+            {...register("Lastname", { required: true })}
+          />
+          {errors.Lastname?.type === "required" && (
             <small className="fail"> The fild is required </small>
-          )}
-        </div>
-
-        {/* //aqui voy mis perrros */}
-        <div className="form-control">
-          <label> email </label>
-          <input type="email" {...register("email", { required: true })} />
-          {errors.age?.type === "required" && (
-            <small className="fail"> The fild is required </small>
-          )}
-          {errors.age?.type === "max" && (
-            <small className="fail"> The maximun number is 100 </small>
-          )}
-          {errors.age?.type === "min" && (
-            <small className="fail"> The minimun number is 5 </small>
           )}
         </div>
 
         <div className="form-control">
-          <label> Country </label>
-          <input type="text" {...register("country", { required: true })} />
-          {errors.country?.type === "required" && (
+          <label> email </label>
+          <input
+            type="email"
+            placeholder="Write your email"
+            {...register("email", {
+              required: true,
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: "Entered value does not match email format",
+              },
+            })}
+          />
+          {errors.email?.type === "required" && (
             <small className="fail"> The fild is required </small>
+          )}
+          {errors.email?.type === "pattern" && (
+            <small className="fail"> {errors.email.message} </small>
+          )}
+        </div>
+
+        <div className="form-control">
+          <label> Password </label>
+          <input
+            type="password"
+            {...register("password", { required: true, minLength:6 })}
+          />
+          {errors.password?.type === "required" && (
+            <small className="fail"> The fild is required </small>
+          )}
+           {errors.password?.type === "minLength" && (
+            <small className="fail"> The min character are six </small>
           )}
         </div>
         <button type="submit"> SEND </button>
