@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { Alert } from "./Alert";
-import { useForm } from "react-hook-form";
+import { Alert } from "../components/Alert";
 
-export function Register() {
+export function Login() {
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
 
-  const { singUp } = useAuth();
+  const { login, loginWithGoogle, logout } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState();
 
@@ -20,22 +19,31 @@ export function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('')
+    setError("");
     try {
-      await singUp(user.email, user.password);
+      await login(user.email, user.password);
       navigate("/");
     } catch (error) {
       if (error.code === "auth/weak-password") {
         setError("invalid password");
       } else if (error.code === "auth/internal-error") {
         setError("invalid email");
-      } else{
+      } else {
         setError("an error has ocurred");
-        console.log(error)
+        console.log(error);
       }
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await loginWithGoogle();
+      navigate("/");
+    } catch (error) {
+      console.log(error)
+      setError(error.message);
+    }
+  };
   return (
     <div>
       {error && <Alert message={error}/>}
@@ -58,8 +66,11 @@ export function Register() {
           onChange={handleChange}
         />
 
-        <button>Register</button>
+        <button>Login</button>
       </form>
+
+      <button onClick={handleGoogleSignIn}>Login with Google</button>
+      <button onClick={() => {logout()}}>Logout</button>
     </div>
   );
 }

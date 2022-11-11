@@ -1,7 +1,10 @@
+
 import { useAuth } from "../context/authContext";
 
 export function Home() {
   const { user, logout, loading } = useAuth();
+
+  console.log(user);
 
   async function handleLogout() {
     try {
@@ -10,11 +13,10 @@ export function Home() {
       console.log(error);
     }
   }
-  console.log(user.uid);
   if (loading) return <h1>loading</h1>;
   return (
     <div>
-      <h1>Welcome {user.email}</h1>
+      <h1>Welcome {user._id}</h1>
       <button onClick={handleLogout}>logout</button>
     </div>
   );

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -11,18 +10,25 @@ export function Register() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({});
+  } = useForm({
+    defaultValues: {
+      name:'nesticor',
+      lastName:'rodriguez',
+      email: 'jhgjhg@hvfv.com',
+      password:'1234567'
+    }
+  });
 
   const customSubmit = async (user) => {
     try {
-      await singUp(user.email, user.password);
+      await singUp(user.email, user.password, user.name, user.lastName);
       navigate("/");
     } catch (error) {
       console.log(error);
       alert(error);
     }
 
-    console.log(user);
+   
   };
 
   return (
@@ -38,7 +44,7 @@ export function Register() {
             {...register("name", { required: true })}
           />
           {errors.name?.type === "required" && (
-            <small className="fail"> The fild is required </small>
+            <small className="fail"> The field is required </small>
           )}
         </div>
 
@@ -47,10 +53,10 @@ export function Register() {
           <input
             type="text"
             placeholder="Write your last name"
-            {...register("Lastname", { required: true })}
+            {...register("lastName", { required: true })}
           />
-          {errors.Lastname?.type === "required" && (
-            <small className="fail"> The fild is required </small>
+          {errors.lastName?.type === "required" && (
+            <small className="fail"> The field is required </small>
           )}
         </div>
 
@@ -68,7 +74,7 @@ export function Register() {
             })}
           />
           {errors.email?.type === "required" && (
-            <small className="fail"> The fild is required </small>
+            <small className="fail"> The field is required </small>
           )}
           {errors.email?.type === "pattern" && (
             <small className="fail"> {errors.email.message} </small>
@@ -82,7 +88,7 @@ export function Register() {
             {...register("password", { required: true, minLength:6 })}
           />
           {errors.password?.type === "required" && (
-            <small className="fail"> The fild is required </small>
+            <small className="fail"> The field is required </small>
           )}
            {errors.password?.type === "minLength" && (
             <small className="fail"> The min character are six </small>
