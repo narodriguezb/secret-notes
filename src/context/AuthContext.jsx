@@ -34,30 +34,30 @@ export function AuthProvider({ children }) {
 
   const singUp = async (email, password, name, lastName) => {
     try {
-      const userResponse = await createUserWithEmailAndPassword(
+      const fireUser = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const mongoResponse = await createUser({
-        uid: userResponse.user.uid,
+      const mongoUser = await createUser({
+        uid: fireUser.user.uid,
         firstName: name,
         lastName,
         email,
       });
-      setUser(mongoResponse);
+      setUser(mongoUser);
     } catch (error) {}
   };
 
   const login = async (email, password) => {
     try {
-      const userResponse = await signInWithEmailAndPassword(
+      const fireUser = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const userData = await getUserUid(userResponse.user.uid);
-      setUser(userData);
+      const mongoUser = await getUserUid(fireUser.user.uid);
+      setUser(mongoUser);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -68,17 +68,20 @@ export function AuthProvider({ children }) {
     const googleProvider = new GoogleAuthProvider();
     const fireUser = await signInWithPopup(auth, googleProvider);
     const mongoUser = await getUserUid(fireUser.user.uid);
+    console.log(mongoUser)
     if (mongoUser) {
-      setUser(userData);
+      setUser(mongoUser);
       setLoading(false);
       return;
     }
+     
 
     const newUser = await createUser({
       uid: fireUser.user.uid,
-      name: fireUser.user.displayName,
+      firstName: fireUser.user.displayName,
       email: fireUser.user.email,
     });
+
 
     setUser(newUser);
     setLoading(false);

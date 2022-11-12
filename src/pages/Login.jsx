@@ -9,7 +9,7 @@ export function Login() {
     password: "",
   });
 
-  const { login, loginWithGoogle, logout } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState();
 
@@ -70,7 +70,6 @@ export function Login() {
       </form>
 
       <button onClick={handleGoogleSignIn}>Login with Google</button>
-      <button onClick={() => {logout()}}>Logout</button>
     </div>
   );
 }
